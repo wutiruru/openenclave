@@ -8,10 +8,19 @@
 - name: Include distribution vars
   include_vars:
     file: "{{ ansible_distribution | lower }}/main.yml"
+  retries: 10
+  register: include_vars
+  until: include_vars is success
 
 - name: Include distribution release specific vars
   include_vars:
     file: "{{ ansible_distribution | lower }}/{{ ansible_distribution_release | lower }}.yml"
+  retries: 10
+  register: include_release
+  until: include_release is success
 
 - name: Install the SGX packages
   include_tasks: "{{ ansible_distribution | lower }}/sgx-packages-install.yml"
+  retries: 10
+  register: intel_install
+  until: intel_install is success
